@@ -1,0 +1,9 @@
+coverage/
+src/
+test/
+.eslintignore
+.eslintrc
+.gitignore
+.prettierrc
+jest.config.json
+*.png

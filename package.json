@@ -1,0 +1,54 @@
+{
+  "name": "azure-ad-jwt-lite",
+  "version": "0.0.9-rc1",
+  "description": "Lightweight (<320kb unzipped) library to validate Microsoft AzureAD. Written in typescript fully-tested with 100% code coverage.",
+  "main": "lib/src/index.js",
+  "engines": {
+    "node": ">=8"
+  },
+  "scripts": {
+    "prettier": "npx prettier --write '{src,test}/**/*.{ts,tsx,json,yml}'",
+    "lint": "npx eslint '{src,test}/**/*.{ts,tsx,json,yml}'",
+    "test": "npx jest",
+    "build": "npx tsc",
+    "publish": "rm -rf ./node_modules && npm i --prod && npm publish"
+  },
+  "keywords": [
+    "azure"
+  ],
+  "author": "Mario Arnautou",
+  "license": "MIT",
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.3",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/sinon": "^9.0.4",
+    "@typescript-eslint/eslint-plugin": "^3.4.0",
+    "@typescript-eslint/parser": "^3.4.0",
+    "eslint": "^7.3.1",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
+    "jest": "^26.1.0",
+    "lint-staged": "^10.2.11",
+    "nock": "^12.0.3",
+    "prettier": "^2.0.5",
+    "sinon": "^9.0.2",
+    "ts-jest": "^26.1.1",
+    "typescript": "^3.9.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run prettier && npm run lint && npm test"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ]
+  }
+}
