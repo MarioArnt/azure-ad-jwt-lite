@@ -1,12 +1,16 @@
 # azure-ad-jwt-lite
+[![Build Status](https://travis-ci.org/MarioArnt/azure-ad-jwt-lite.svg?branch=master)](https://travis-ci.org/MarioArnt/azure-ad-jwt-lite)
+[![codecov](https://codecov.io/gh/MarioArnt/azure-ad-jwt-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/MarioArnt/azure-ad-jwt-lite)
 
-![Logo](https://github.com/MarioArnt/azure-ad-jwt-lite/blob/master/logo.png?raw=true)
+<p align="center">
+  <img src="https://github.com/MarioArnt/azure-ad-jwt-lite/blob/master/logo.png?raw=true" alt="Logo"/>
+</p>
 
 Lightweight library to verify AzureAD JSON Web Tokens.
 
-It weights less than 320 kilobytes and has only one dependeny: [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+It weights around 12KB alone and less than 320KB with its only one dependeny: [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
 
-Other libraries generally includes `request` and are bloated. I decided to write this lib because the previous helper I used weighted more than 4MB !
+Other libraries generally includes `request` and are bloated. I decided to write this lib because the previous helper I used weighted more than 4MB with all its dependencies!
 
 ## Getting started
 
