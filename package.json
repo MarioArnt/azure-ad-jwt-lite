@@ -13,7 +13,17 @@
     "build": "npx tsc"
   },
   "keywords": [
-    "azure"
+    "azure",
+    "azuread",
+    "aad",
+    "azure-ad",
+    "jwt",
+    "jsonwebtoken",
+    "auth",
+    "oauth2",
+    "light",
+    "lightweight",
+    "typescript"
   ],
   "author": "Mario Arnautou",
   "repository": {
