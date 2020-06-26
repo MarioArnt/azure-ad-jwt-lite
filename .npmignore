@@ -7,3 +7,4 @@ test/
 .prettierrc
 jest.config.json
 *.png
+.travis.yml

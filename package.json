@@ -1,6 +1,6 @@
 {
   "name": "azure-ad-jwt-lite",
-  "version": "0.0.9-rc1",
+  "version": "1.0.0",
   "description": "Lightweight (<320kb unzipped) library to validate Microsoft AzureAD. Written in typescript fully-tested with 100% code coverage.",
   "main": "lib/src/index.js",
   "engines": {
@@ -17,6 +17,9 @@
     "azure"
   ],
   "author": "Mario Arnautou",
+  "repository": {
+    "url": "https://github.com/MarioArnt/azure-ad-jwt-lite"
+  },
   "license": "MIT",
   "dependencies": {
     "jsonwebtoken": "^8.5.1"
