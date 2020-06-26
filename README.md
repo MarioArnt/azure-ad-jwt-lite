@@ -14,7 +14,7 @@ Other libraries generally includes `request` and are bloated. I decided to write
 
 Futhermore, it is written in typescript and provide its own type definitions.
 
-Last but not least, it is unit tested with one-percent test coverage.
+Last but not least, it is unit tested with one-hundred percent test coverage.
 
 ## Getting started
 
