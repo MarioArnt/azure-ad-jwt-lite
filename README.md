@@ -12,9 +12,15 @@ It weights around 12KB alone and less than 320KB with its only one dependeny: [j
 
 Other libraries generally includes `request` and are bloated. I decided to write this lib because the previous helper I used weighted more than 4MB with all its dependencies!
 
+Futhermore, it is written in typescript and provide its own type definitions.
+
+Last but not least, it is unit tested with one-percent test coverage.
+
 ## Getting started
 
 Install the package using yarn or NPM: `npm i azure-ad-jwt-lite`
+
+Donc forget to install `jsonwebtoken` types definitions as dev dependency if you are using Typescript: `npm i -D @types/jsonwebtoken`.
 
 In your authentication middleware decode and verify the token using:
 
