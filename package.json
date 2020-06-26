@@ -10,8 +10,7 @@
     "prettier": "npx prettier --write '{src,test}/**/*.{ts,tsx,json,yml}'",
     "lint": "npx eslint '{src,test}/**/*.{ts,tsx,json,yml}'",
     "test": "npx jest",
-    "build": "npx tsc",
-    "publish": "rm -rf ./node_modules && npm i --prod && npm publish"
+    "build": "npx tsc"
   },
   "keywords": [
     "azure"
