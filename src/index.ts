@@ -60,7 +60,6 @@ const getKeys = async (): Promise<Array<IMicrosoftKey>> => {
         return resolve(response.keys);
       });
     }).on('error', (err) => {
-      console.error(err);
       return reject(throwError(err));
     });
   });

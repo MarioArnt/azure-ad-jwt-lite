@@ -65,9 +65,18 @@ describe('The verify AzureAD JWT method', () => {
       expect(e.code).toBe('MissingKeyID');
     }
   });
-  it('should throw ErrorFetchingKeys if call to retrieve microsoft keys fails', async () => {
+  it('should throw ErrorFetchingKeys if call to retrieve microsoft keys returns status code different than 200', async () => {
     try {
       nock(discovery.host).get(discovery.endpoint).reply(503, 'Service Unavailable');
+      stubs.decode.withArgs(mocks.token, { complete: true }).returns({ header: { kid: discovery.keyid } });
+      await verifyAzureToken(mocks.token);
+    } catch (e) {
+      expect(e.code).toBe('ErrorFetchingKeys');
+    }
+  });
+  it('should throw ErrorFetchingKeys if call to retrieve microsoft keys fails', async () => {
+    try {
+      nock(discovery.host).get(discovery.endpoint).replyWithError('Network Failure :S');
       stubs.decode.withArgs(mocks.token, { complete: true }).returns({ header: { kid: discovery.keyid } });
       await verifyAzureToken(mocks.token);
     } catch (e) {
