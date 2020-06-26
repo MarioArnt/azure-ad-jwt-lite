@@ -1,5 +1,7 @@
 # azure-ad-jwt-lite
 
+![Logo](https://github.com/MarioArnt/azure-ad-jwt-lite/blob/master/logo.png?raw=true)
+
 Lightweight library to verify AzureAD JSON Web Tokens.
 
 It weights less than 320 kilobytes and has only one dependeny: [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)

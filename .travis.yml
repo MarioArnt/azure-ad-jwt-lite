@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+  - 12
+branches:
+jobs:
+  include:
+    - stage: install
+      script: npm i
+      skip_cleanup: true
+    - stage: test
+      script:
+        - npm run lint
+        - npm test
+      after_success:
+        - npx codecov
+      skip_cleanup: true
+    - stage: build
+      script:
+        - npm run build
