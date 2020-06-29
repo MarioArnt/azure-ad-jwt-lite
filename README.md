@@ -1,6 +1,7 @@
 # azure-ad-jwt-lite
 [![Build Status](https://travis-ci.org/MarioArnt/azure-ad-jwt-lite.svg?branch=master)](https://travis-ci.org/MarioArnt/azure-ad-jwt-lite)
 [![codecov](https://codecov.io/gh/MarioArnt/azure-ad-jwt-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/MarioArnt/azure-ad-jwt-lite)
+[![Known Vulnerabilities](https://snyk.io/test/github/MarioArnt/azure-ad-jwt-lite/badge.svg?targetFile=package.json)](https://snyk.io/test/github/MarioArnt/azure-ad-jwt-lite?targetFile=package.json)
 
 <p align="center">
   <img src="https://github.com/MarioArnt/azure-ad-jwt-lite/blob/master/logo.png?raw=true" alt="Logo"/>
@@ -20,7 +21,7 @@ Last but not least, it is unit tested with one-hundred percent test coverage.
 
 Install the package using yarn or NPM: `npm i azure-ad-jwt-lite`
 
-Donc forget to install `jsonwebtoken` types definitions as dev dependency if you are using Typescript: `npm i -D @types/jsonwebtoken`.
+Do not forget to install `jsonwebtoken` types definitions as dev dependency if you are using Typescript: `npm i -D @types/jsonwebtoken`.
 
 In your authentication middleware decode and verify the token using:
 
