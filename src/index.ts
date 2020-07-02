@@ -1,9 +1,13 @@
 import { get } from 'https';
 import { VerifyOptions, decode, verify } from 'jsonwebtoken';
 
-const discoveryUrl = 'https://login.microsoftonline.com/common/discovery/keys';
+const DISCOVERY_URL = 'https://login.microsoftonline.com/common/discovery/keys';
+const RETRIES = 2;
 
-export type DecodeOptions = VerifyOptions;
+export interface DecodeOptions extends VerifyOptions {
+  discoveryUrl?: string;
+  maxRetries?: number;
+}
 
 interface IMicrosoftKey {
   kty: string;
@@ -25,6 +29,7 @@ type ErrorCode =
   | 'InvalidToken'
   | 'MissingKeyID'
   | 'ErrorFetchingKeys'
+  | 'InvalidDiscoveryResponse'
   | 'JsonWebTokenError';
 
 class AzureJwtError extends Error {
@@ -42,25 +47,57 @@ class AzureJwtError extends Error {
  * @returns they public keys corresponding to the private keys used by microsoft to sign token.
  * @throws ErrorFetchingKeys if API call fails for some reason.
  */
-const getKeys = async (): Promise<Array<IMicrosoftKey>> => {
+const getKeys = async (options: DecodeOptions, attempt = 0): Promise<Array<IMicrosoftKey>> => {
+  const discoveryURL = options && options.discoveryUrl != null ? options.discoveryUrl : DISCOVERY_URL;
+  const retries = options && options.maxRetries != null ? options.maxRetries : RETRIES;
   const throwError = (err: Error): Error => {
     return new AzureJwtError('ErrorFetchingKeys', 'An error occured retrieving public keys from Microsoft API', err);
   };
+  const retry = (err: Error): Promise<Array<IMicrosoftKey>> => {
+    return new Promise((resolve, reject) => {
+      if (attempt >= retries) {
+        return reject(throwError(err));
+      }
+      return getKeys(options, attempt + 1)
+        .then(resolve)
+        .catch(reject);
+    });
+  };
   return new Promise((resolve, reject) => {
-    get(discoveryUrl, (res) => {
+    get(discoveryURL, (res) => {
       let data = '';
       res.on('data', (chunk) => {
         data += chunk;
       });
       res.on('end', () => {
         if (res.statusCode !== 200) {
-          return reject(throwError(new Error(`Server answered with status code ${res.statusCode}`)));
+          const error = new Error(`Server answered with status code ${res.statusCode}`);
+          if (res.statusCode > 499 && res.statusCode < 600) {
+            // Retry on 5XX
+            return retry(error).then(resolve).catch(reject);
+          }
+          return reject(throwError(error));
         }
-        const response = JSON.parse(data);
-        return resolve(response.keys);
+        const invalidPayloadError = new AzureJwtError(
+          'InvalidDiscoveryResponse',
+          `API call to discovery URL ${discoveryURL} returned an invalid response`,
+        );
+        const verifyResponse = (): IMicrosoftKey[] => {
+          const validated = JSON.parse(data) as { keys: IMicrosoftKey[] };
+          if (validated.keys && Array.isArray(validated.keys) && validated.keys.every((key) => key.x5c != null)) {
+            return validated.keys;
+          }
+          throw new Error('Invalid Payload');
+        };
+        try {
+          const keys = verifyResponse();
+          return resolve(keys);
+        } catch (e) {
+          return reject(invalidPayloadError);
+        }
       });
     }).on('error', (err) => {
-      return reject(throwError(err));
+      return retry(err).then(resolve).catch(reject);
     });
   });
 };
@@ -71,8 +108,8 @@ const getKeys = async (): Promise<Array<IMicrosoftKey>> => {
  * @returns the properly formatted public key corrsponding to the given key ID.
  * @throws NotMatchingKey - If no matching key is found in microsoft response.
  */
-const buildKey = async (kid: string) => {
-  const keys = await getKeys();
+const buildKey = async (options: DecodeOptions, kid: string) => {
+  const keys = await getKeys(options);
   const matchingKey = keys.find((k) => k.kid === kid);
   if (!matchingKey) {
     throw new AzureJwtError(
@@ -93,8 +130,14 @@ const buildKey = async (kid: string) => {
  * @returns resolves the decoded token payload if suceeds.
  */
 const verifyJWT = async (token: string, key: string, options: DecodeOptions): Promise<unknown> => {
+  const extractOptions = (): VerifyOptions => {
+    const decodeOptions = { ...options };
+    delete decodeOptions.maxRetries;
+    delete decodeOptions.discoveryUrl;
+    return decodeOptions;
+  };
   return new Promise((resolve, reject) => {
-    verify(token, key, options, (err, decoded) => {
+    verify(token, key, extractOptions(), (err, decoded) => {
       if (err) {
         return reject(new AzureJwtError('JsonWebTokenError', err.message));
       }
@@ -134,6 +177,6 @@ export const verifyAzureToken = async (token: string, options?: DecodeOptions): 
       'The given JWT has no kid. Please double-check it is a valid AzureAD token.',
     );
   }
-  const key = await buildKey(kid);
+  const key = await buildKey(options, kid);
   return verifyJWT(token, key, options);
 };

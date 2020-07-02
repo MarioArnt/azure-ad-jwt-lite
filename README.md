@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.org/MarioArnt/azure-ad-jwt-lite.svg?branch=master)](https://travis-ci.org/MarioArnt/azure-ad-jwt-lite)
 [![codecov](https://codecov.io/gh/MarioArnt/azure-ad-jwt-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/MarioArnt/azure-ad-jwt-lite)
 [![Known Vulnerabilities](https://snyk.io/test/github/MarioArnt/azure-ad-jwt-lite/badge.svg?targetFile=package.json)](https://snyk.io/test/github/MarioArnt/azure-ad-jwt-lite?targetFile=package.json)
+[![Maintainability](https://api.codeclimate.com/v1/badges/383bd57e1d158baf0b2c/maintainability)](https://codeclimate.com/github/MarioArnt/azure-ad-jwt-lite/maintainability)
 
 <p align="center">
   <img src="https://github.com/MarioArnt/azure-ad-jwt-lite/blob/master/logo.png?raw=true" alt="Logo"/>
@@ -37,6 +38,24 @@ You can add any option supported by [jsonwebtoken](https://www.npmjs.com/package
 import { verifyAzureToken } from 'azure-ad-jwt-lite';
 
 const decoded = verifyAzureToken(token, {
+  audience: process.env.JWT_AUD,
+  issuer: process.env.JWT_ISS,
+});
+```
+
+## Additional options
+
+* Discovery URL: The URL to fetch Microsoft public keys (defaults to https://login.microsoftonline.com/common/discovery/keys)
+
+* Retries on 5xx: set the number of retries when request to fetch keys returns a 5xx response (defaults to 2)
+
+
+```typescript
+import { verifyAzureToken } from 'azure-ad-jwt-lite';
+
+const decoded = verifyAzureToken(token, {
+  discoveryUrl: `https://login.microsoftonline.com/${process.env.TENANT}/discovery/keys?appid=${process.env.APP_ID}`,
+  maxRetries: 5,
   audience: process.env.JWT_AUD,
   issuer: process.env.JWT_ISS,
 });
