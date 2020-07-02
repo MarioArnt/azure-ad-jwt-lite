@@ -1,4 +1,5 @@
 import { get } from 'https';
+import { IncomingMessage } from 'http';
 import { VerifyOptions, decode, verify } from 'jsonwebtoken';
 
 const DISCOVERY_URL = 'https://login.microsoftonline.com/common/discovery/keys';
@@ -42,6 +43,71 @@ class AzureJwtError extends Error {
   }
 }
 
+const invalidPayloadError = (discoveryURL: string) =>
+  new AzureJwtError(
+    'InvalidDiscoveryResponse',
+    `API call to discovery URL ${discoveryURL} returned an invalid response`,
+  );
+
+const throwError = (err: Error): Error => {
+  return new AzureJwtError('ErrorFetchingKeys', 'An error occured retrieving public keys from Microsoft API', err);
+};
+
+/**
+ * Retry request on network failure or on 5xx
+ */
+const retry = (err: Error, attempt: number, retries: number, options: DecodeOptions): Promise<Array<IMicrosoftKey>> => {
+  return new Promise((resolve, reject) => {
+    if (attempt >= retries) {
+      return reject(throwError(err));
+    }
+    return getKeys(options, attempt + 1)
+      .then(resolve)
+      .catch(reject);
+  });
+};
+
+/**
+ * Verify that payload response is on the expected format
+ */
+const verifyResponse = (data: string): IMicrosoftKey[] => {
+  const validated = JSON.parse(data) as { keys: IMicrosoftKey[] };
+  if (validated.keys && Array.isArray(validated.keys) && validated.keys.every((key) => key.x5c != null)) {
+    return validated.keys;
+  }
+  throw new Error('Invalid Payload');
+};
+
+/**
+ * Handle HTTP GET discovery url response.
+ * Retries on 5xx.
+ */
+const onResponse = (
+  response: IncomingMessage,
+  data: string,
+  attempt: number,
+  retries: number,
+  options: DecodeOptions,
+  url: string,
+): Promise<Array<IMicrosoftKey>> => {
+  return new Promise((resolve, reject) => {
+    if (response.statusCode !== 200) {
+      const error = new Error(`Server answered with status code ${response.statusCode}`);
+      if (response.statusCode > 499 && response.statusCode < 600) {
+        // Retry on 5XX
+        return retry(error, attempt, retries, options).then(resolve).catch(reject);
+      }
+      return reject(throwError(error));
+    }
+    try {
+      const keys = verifyResponse(data);
+      return resolve(keys);
+    } catch (e) {
+      return reject(invalidPayloadError(url));
+    }
+  });
+};
+
 /**
  * Fetch Microsoft public keys with API call and build.
  * @returns they public keys corresponding to the private keys used by microsoft to sign token.
@@ -50,55 +116,14 @@ class AzureJwtError extends Error {
 const getKeys = async (options: DecodeOptions, attempt = 0): Promise<Array<IMicrosoftKey>> => {
   const discoveryURL = options && options.discoveryUrl != null ? options.discoveryUrl : DISCOVERY_URL;
   const retries = options && options.maxRetries != null ? options.maxRetries : RETRIES;
-  const throwError = (err: Error): Error => {
-    return new AzureJwtError('ErrorFetchingKeys', 'An error occured retrieving public keys from Microsoft API', err);
-  };
-  const retry = (err: Error): Promise<Array<IMicrosoftKey>> => {
-    return new Promise((resolve, reject) => {
-      if (attempt >= retries) {
-        return reject(throwError(err));
-      }
-      return getKeys(options, attempt + 1)
-        .then(resolve)
-        .catch(reject);
-    });
-  };
   return new Promise((resolve, reject) => {
     get(discoveryURL, (res) => {
       let data = '';
       res.on('data', (chunk) => {
         data += chunk;
       });
-      res.on('end', () => {
-        if (res.statusCode !== 200) {
-          const error = new Error(`Server answered with status code ${res.statusCode}`);
-          if (res.statusCode > 499 && res.statusCode < 600) {
-            // Retry on 5XX
-            return retry(error).then(resolve).catch(reject);
-          }
-          return reject(throwError(error));
-        }
-        const invalidPayloadError = new AzureJwtError(
-          'InvalidDiscoveryResponse',
-          `API call to discovery URL ${discoveryURL} returned an invalid response`,
-        );
-        const verifyResponse = (): IMicrosoftKey[] => {
-          const validated = JSON.parse(data) as { keys: IMicrosoftKey[] };
-          if (validated.keys && Array.isArray(validated.keys) && validated.keys.every((key) => key.x5c != null)) {
-            return validated.keys;
-          }
-          throw new Error('Invalid Payload');
-        };
-        try {
-          const keys = verifyResponse();
-          return resolve(keys);
-        } catch (e) {
-          return reject(invalidPayloadError);
-        }
-      });
-    }).on('error', (err) => {
-      return retry(err).then(resolve).catch(reject);
-    });
+      res.on('end', () => onResponse(res, data, attempt, retries, options, discoveryURL).then(resolve).catch(reject));
+    }).on('error', (err) => retry(err, attempt, retries, options).then(resolve).catch(reject));
   });
 };
 
