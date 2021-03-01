@@ -1,6 +1,6 @@
 {
   "name": "azure-ad-jwt-lite",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Lightweight (<320kb unzipped) library to validate Microsoft AzureAD. Written in typescript fully-tested with 100% code coverage.",
   "main": "lib/src/index.js",
   "engines": {
