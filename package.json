@@ -1,6 +1,6 @@
 {
   "name": "azure-ad-jwt-lite",
-  "version": "1.1.1",
+  "version": "0.0.0-development",
   "description": "Lightweight (<320kb unzipped) library to validate Microsoft AzureAD. Written in typescript fully-tested with 100% code coverage.",
   "main": "lib/src/index.js",
   "engines": {
@@ -10,7 +10,8 @@
     "prettier": "npx prettier --write '{src,test}/**/*.{ts,tsx,json,yml}'",
     "lint": "npx eslint '{src,test}/**/*.{ts,tsx,json,yml}'",
     "test": "npx jest",
-    "build": "npx tsc"
+    "build": "npx tsc",
+    "semantic-release": "semantic-release"
   },
   "keywords": [
     "azure",
@@ -43,15 +44,14 @@
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "execa": "^5.0.0",
     "husky": "^4.2.5",
     "jest": "^26.1.0",
     "lint-staged": "^10.2.11",
     "nock": "^12.0.3",
     "prettier": "^2.0.5",
+    "semantic-release": "^17.4.0",
     "sinon": "^9.0.2",
     "ts-jest": "^26.1.1",
-    "ts-node": "^9.1.1",
     "typescript": "^3.9.5"
   },
   "husky": {
