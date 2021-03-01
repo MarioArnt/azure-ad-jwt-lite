@@ -20,5 +20,6 @@ jobs:
       skip_cleanup: true
     - stage: publish
       script:
-        - npx ts-node ./scripts/publish.ts
-      if: branch = master
+        - npm run build
+        - npx semantic-release
+      if: branch = master AND type != pull_request
