@@ -1,5 +1,5 @@
 # azure-ad-jwt-lite
-[![Build Status](https://travis-ci.org/MarioArnt/azure-ad-jwt-lite.svg?branch=master)](https://travis-ci.org/MarioArnt/azure-ad-jwt-lite)
+[![Build Status](https://travis-ci.com/MarioArnt/azure-ad-jwt-lite.svg?branch=master)](https://travis-ci.com/MarioArnt/azure-ad-jwt-lite)
 [![codecov](https://codecov.io/gh/MarioArnt/azure-ad-jwt-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/MarioArnt/azure-ad-jwt-lite)
 [![Known Vulnerabilities](https://snyk.io/test/github/MarioArnt/azure-ad-jwt-lite/badge.svg?targetFile=package.json)](https://snyk.io/test/github/MarioArnt/azure-ad-jwt-lite?targetFile=package.json)
 [![Maintainability](https://api.codeclimate.com/v1/badges/383bd57e1d158baf0b2c/maintainability)](https://codeclimate.com/github/MarioArnt/azure-ad-jwt-lite/maintainability)

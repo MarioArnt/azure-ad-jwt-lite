@@ -17,3 +17,8 @@ jobs:
     - stage: build
       script:
         - npm run build
+      skip_cleanup: true
+    - stage: publish
+      script:
+        - npx ts-node ./scripts/publish.ts
+      if: branch = master
