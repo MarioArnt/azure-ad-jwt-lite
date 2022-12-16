@@ -35,7 +35,7 @@ type ErrorCode =
   | 'InvalidDiscoveryResponse'
   | 'JsonWebTokenError';
 
-class AzureJwtError extends Error {
+export class AzureJwtError extends Error {
   code: ErrorCode;
   details: Error;
   constructor(code: ErrorCode, msg: string, details?: Error) {
@@ -52,7 +52,7 @@ const invalidPayloadError = (discoveryURL: string) =>
   );
 
 const throwError = (err: Error): Error => {
-  return new AzureJwtError('ErrorFetchingKeys', 'An error occured retrieving public keys from Microsoft API', err);
+  return new AzureJwtError('ErrorFetchingKeys', 'An error occurred retrieving public keys from Microsoft API', err);
 };
 
 /**
