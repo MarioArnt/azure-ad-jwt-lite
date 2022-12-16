@@ -8,6 +8,8 @@ const RETRIES = 2;
 export interface DecodeOptions extends VerifyOptions {
   discoveryUrl?: string;
   maxRetries?: number;
+  useCache?: boolean;
+  cacheTtl?: number;
 }
 
 interface IMicrosoftKey {
@@ -108,6 +110,10 @@ const onResponse = (
   });
 };
 
+const cachedKeys: { obtainedAt?: number; value?: IMicrosoftKey[] } = {};
+const FIVE_MINUTES = 5 * 60 * 1000;
+const DEFAULT_CACHE_TTL = FIVE_MINUTES;
+
 /**
  * Fetch Microsoft public keys with API call and build.
  * @returns they public keys corresponding to the private keys used by microsoft to sign token.
@@ -116,7 +122,13 @@ const onResponse = (
 const getKeys = async (options: DecodeOptions, attempt = 0): Promise<Array<IMicrosoftKey>> => {
   const discoveryURL = options && options.discoveryUrl != null ? options.discoveryUrl : DISCOVERY_URL;
   const retries = options && options.maxRetries != null ? options.maxRetries : RETRIES;
-  return new Promise((resolve, reject) => {
+  const useCache = !options || options.useCache !== false;
+  const isExpired =
+    cachedKeys.obtainedAt && Date.now() - cachedKeys.obtainedAt > (options.cacheTtl || DEFAULT_CACHE_TTL);
+  if (useCache && cachedKeys.value && !isExpired) {
+    return cachedKeys.value;
+  }
+  const keys = await new Promise<Array<IMicrosoftKey>>((resolve, reject) => {
     get(discoveryURL, (res) => {
       let data = '';
       res.on('data', (chunk) => {
@@ -125,12 +137,18 @@ const getKeys = async (options: DecodeOptions, attempt = 0): Promise<Array<IMicr
       res.on('end', () => onResponse(res, data, attempt, retries, options, discoveryURL).then(resolve).catch(reject));
     }).on('error', (err) => retry(err, attempt, retries, options).then(resolve).catch(reject));
   });
+  if (useCache) {
+    cachedKeys.value = keys;
+    cachedKeys.obtainedAt = Date.now();
+  }
+  return keys;
 };
 
 /**
  * Fetch Microsoft public keys with API call and build.
+ * @param options - the JWT options enriched with caching and discovery options
  * @param kid - the key ID used to sign token. This comes from JWT header.
- * @returns the properly formatted public key corrsponding to the given key ID.
+ * @returns the properly formatted public key corresponding to the given key ID.
  * @throws NotMatchingKey - If no matching key is found in microsoft response.
  */
 const buildKey = async (options: DecodeOptions, kid: string) => {
@@ -150,15 +168,18 @@ const buildKey = async (options: DecodeOptions, kid: string) => {
 /**
  * Asynchronously verify JSON Web Token using official Auth0 library.
  * @param token - the encoded token.
- * @param key - the public key corresponding to the private key thats signed token.
+ * @param key - the public key corresponding to the private key that signed token.
+ * @param options - any options supported by jsonwebtoken
  * @throws JsonWebTokenError with the human-readable reason if token cannot be verified.
- * @returns resolves the decoded token payload if suceeds.
+ * @returns resolves the decoded token payload if succeeds.
  */
 const verifyJWT = async (token: string, key: string, options: DecodeOptions): Promise<unknown> => {
   const extractOptions = (): VerifyOptions => {
     const decodeOptions = { ...options };
     delete decodeOptions.maxRetries;
     delete decodeOptions.discoveryUrl;
+    delete decodeOptions.useCache;
+    delete decodeOptions.cacheTtl;
     return decodeOptions;
   };
   return new Promise((resolve, reject) => {
@@ -182,7 +203,7 @@ const verifyJWT = async (token: string, key: string, options: DecodeOptions): Pr
  * @throws ErrorFetchingKeys if API call to fetch Microsoft public keys fails for some reason.
  * @throws NotMatchingKey - If no matching key is found in Microsoft response.
  * @throws JsonWebTokenError with a human-readable error message if token cannot be verified.
- * @returns resolves the decoded token payload if verification suceeds.
+ * @returns resolves the decoded token payload if verification succeeds.
  */
 export const verifyAzureToken = async (token: string, options?: DecodeOptions): Promise<unknown> => {
   if (!token || typeof token !== 'string') {
@@ -192,7 +213,7 @@ export const verifyAzureToken = async (token: string, options?: DecodeOptions): 
   if (!decoded) {
     throw new AzureJwtError(
       'TokenNotDecoded',
-      'An error occured decoding you JWT. Check that your token is a well-formed JWT',
+      'An error occurred decoding you JWT. Check that your token is a well-formed JWT',
     );
   }
   const kid = decoded.header.kid;
@@ -204,4 +225,9 @@ export const verifyAzureToken = async (token: string, options?: DecodeOptions): 
   }
   const key = await buildKey(options, kid);
   return verifyJWT(token, key, options);
+};
+
+export const invalidateCache = () => {
+  cachedKeys.value = undefined;
+  cachedKeys.obtainedAt = undefined;
 };
