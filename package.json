@@ -57,5 +57,8 @@
     "*.{js,ts,tsx}": [
       "eslint --fix"
     ]
+  },
+  "release": {
+    "branches": ["main", "next"]
   }
 }
