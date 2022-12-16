@@ -1,9 +1,9 @@
 name: Publish new version on NPM
 
 on:
-  branches:
-    - next
-    - main
+  push:
+    branches:
+      - main
 
 jobs:
   setup:
@@ -54,5 +54,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint
+      - name: Build
         run: npm run build
+
+      - name: Publish
+        run: npx semantic-release
