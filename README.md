@@ -61,6 +61,12 @@ const decoded = verifyAzureToken(token, {
 });
 ```
 
+### Caching keys
+
+Public keys from discovery endpoint calls are cached for a default TTL of 5 minutes.
+
+You can disable caching using ``useCache: false`` in options, or modify TTL using `cacheTtl` option.
+
 ## Error reference
 
 The lib will throw the following errors if something wrong happends during decoding token:
