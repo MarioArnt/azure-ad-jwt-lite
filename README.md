@@ -1,11 +1,21 @@
 # azure-ad-jwt-lite
-[![Build Status](https://travis-ci.com/MarioArnt/azure-ad-jwt-lite.svg?branch=master)](https://travis-ci.com/MarioArnt/azure-ad-jwt-lite)
-[![codecov](https://codecov.io/gh/MarioArnt/azure-ad-jwt-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/MarioArnt/azure-ad-jwt-lite)
-[![Known Vulnerabilities](https://snyk.io/test/github/MarioArnt/azure-ad-jwt-lite/badge.svg?targetFile=package.json)](https://snyk.io/test/github/MarioArnt/azure-ad-jwt-lite?targetFile=package.json)
-[![Maintainability](https://api.codeclimate.com/v1/badges/383bd57e1d158baf0b2c/maintainability)](https://codeclimate.com/github/MarioArnt/azure-ad-jwt-lite/maintainability)
+
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/azure-ad-jwt-lite)
+![npm](https://img.shields.io/npm/dm/azure-ad-jwt-lite)
+![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/MarioArnt/azure-ad-jwt-lite)
+
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/MarioArnt/azure-ad-jwt-lite/publish.yml)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=MarioArnt_azure-ad-jwt-lite&metric=coverage)](https://sonarcloud.io/dashboard?id=MarioArnt_azure-ad-jwt-lite)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=MarioArnt_azure-ad-jwt-lite&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=MarioArnt_azure-ad-jwt-lite)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=MarioArnt_azure-ad-jwt-lite&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=MarioArnt_azure-ad-jwt-lite)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=MarioArnt_azure-ad-jwt-lite&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=MarioArnt_azure-ad-jwt-lite)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=MarioArnt_azure-ad-jwt-lite&metric=security_rating)](https://sonarcloud.io/dashboard?id=MarioArnt_azure-ad-jwt-lite)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=MarioArnt_azure-ad-jwt-lite&metric=sqale_index)](https://sonarcloud.io/dashboard?id=MarioArnt_azure-ad-jwt-lite)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=MarioArnt_azure-ad-jwt-lite&metric=bugs)](https://sonarcloud.io/dashboard?id=MarioArnt_azure-ad-jwt-lite)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=MarioArnt_azure-ad-jwt-lite&metric=code_smells)](https://sonarcloud.io/dashboard?id=MarioArnt_azure-ad-jwt-lite)
 
 <p align="center">
-  <img src="https://github.com/MarioArnt/azure-ad-jwt-lite/blob/master/logo.png?raw=true" alt="Logo"/>
+  <img src="https://github.com/MarioArnt/azure-ad-jwt-lite/blob/main/logo.png?raw=true" alt="Logo"/>
 </p>
 
 Lightweight library to verify AzureAD JSON Web Tokens.
@@ -29,7 +39,7 @@ In your authentication middleware decode and verify the token using:
 ```typescript
 import { verifyAzureToken } from 'azure-ad-jwt-lite';
 
-const decoded = verifyAzureToken(token);
+const decoded = await verifyAzureToken(token);
 ```
 
 You can add any option supported by [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken):
@@ -37,7 +47,7 @@ You can add any option supported by [jsonwebtoken](https://www.npmjs.com/package
 ```typescript
 import { verifyAzureToken } from 'azure-ad-jwt-lite';
 
-const decoded = verifyAzureToken(token, {
+const decoded = await verifyAzureToken(token, {
   audience: process.env.JWT_AUD,
   issuer: process.env.JWT_ISS,
 });
@@ -53,7 +63,7 @@ const decoded = verifyAzureToken(token, {
 ```typescript
 import { verifyAzureToken } from 'azure-ad-jwt-lite';
 
-const decoded = verifyAzureToken(token, {
+const decoded = await verifyAzureToken(token, {
   discoveryUrl: `https://login.microsoftonline.com/${process.env.TENANT}/discovery/keys?appid=${process.env.APP_ID}`,
   maxRetries: 5,
   audience: process.env.JWT_AUD,
