@@ -34,7 +34,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Lint
+      - name: Run Unit Tests
         run: npm test
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
