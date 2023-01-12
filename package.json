@@ -11,7 +11,7 @@
     "lint": "npx eslint '{src,test}/**/*.{ts,tsx,json,yml}'",
     "test": "npx jest",
     "build": "npx tsc",
-    "semantic-release": "semantic-release"
+    "semantic-release": "npx semantic-release"
   },
   "keywords": [
     "azure",

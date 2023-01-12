@@ -1,10 +1,12 @@
 # azure-ad-jwt-lite
 
+![npm](https://img.shields.io/npm/v/azure-ad-jwt-lite)
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/azure-ad-jwt-lite)
 ![npm](https://img.shields.io/npm/dm/azure-ad-jwt-lite)
-![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/MarioArnt/azure-ad-jwt-lite)
+[![semantic-release](https://img.shields.io/badge/semantic--release-enabled?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/MarioArnt/azure-ad-jwt-lite/publish.yml)
+![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/MarioArnt/azure-ad-jwt-lite)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=MarioArnt_azure-ad-jwt-lite&metric=coverage)](https://sonarcloud.io/dashboard?id=MarioArnt_azure-ad-jwt-lite)
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=MarioArnt_azure-ad-jwt-lite&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=MarioArnt_azure-ad-jwt-lite)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=MarioArnt_azure-ad-jwt-lite&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=MarioArnt_azure-ad-jwt-lite)
