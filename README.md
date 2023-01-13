@@ -1,7 +1,7 @@
 # azure-ad-jwt-lite
 
-![npm](https://img.shields.io/npm/v/azure-ad-jwt-lite)
-![npm bundle size](https://img.shields.io/bundlephobia/minzip/azure-ad-jwt-lite)
+[![npm](https://img.shields.io/npm/v/azure-ad-jwt-lite)](https://www.npmjs.com/package/azure-ad-jwt-lite)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/azure-ad-jwt-lite)](https://bundlephobia.com/package/azure-ad-jwt-lite)
 ![npm](https://img.shields.io/npm/dm/azure-ad-jwt-lite)
 [![semantic-release](https://img.shields.io/badge/semantic--release-enabled?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
