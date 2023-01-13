@@ -30,6 +30,8 @@ Futhermore, it is written in typescript and provide its own type definitions.
 
 Last but not least, it is unit tested with one-hundred percent test coverage.
 
+> Need lightweight lib to verify AWS Cognito tokens ? [Check this out](https://github.com/MarioArnt/cognito-jwt-lite)
+
 ## Getting started
 
 Install the package using yarn or NPM: `npm i azure-ad-jwt-lite`
